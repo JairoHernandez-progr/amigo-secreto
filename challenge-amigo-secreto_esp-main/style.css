@@ -188,7 +188,7 @@ ul {
 .name-list li {
     padding: 10px; /* Espacio dentro de cada item */
     margin-bottom: 5px; /* Espacio entre los items */
-    background-color: #fff; /* Fondo blanco para cada item */
+    background-color: #cfe3f0; /* Fondo blanco para cada item */
     border-radius: 4px; /* Bordes redondeados para cada item */
     font-size: 16px; /* Tamaño de fuente adecuado */
     color: #333; /* Color del texto */
