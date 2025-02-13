@@ -1,21 +1,28 @@
 // El principal objetivo de este desafío es fortalecer tus habilidades en lógica de programación. Aquí deberás desarrollar la lógica para resolver el problema.
 
 let amigosIngresados =[];
+let contadorGanadores = {}; // Contador de victorias por amigos
 
-function ingresarAmigos(){
-    console.log(amigosIngresados);
-    let textoIngresado = document.getElementById ('amigo');
-        if(textoIngresado.value.trim() !== ''){
-            amigosIngresados.push(textoIngresado.value.trim());
+//ingreso de amigos 
+function ingresarAmigos() {
+    let textoIngresado = document.getElementById('amigo');
+    if (textoIngresado.value.trim() !== '') {
+        const nombre = textoIngresado.value.trim();
+        
+        if (!amigosIngresados.includes(nombre)) { // Evita duplicados
+            amigosIngresados.push(nombre);
+            contadorGanadores[nombre] = 0; // Inicializa el contador para este amigo
             textoIngresado.value = "";
             agregarLista();
-            console.log("amigo agregado",amigosIngresados);
-        }else{
-            alert("Por favor, inserte un nombre");
+            actualizarListaContador();
+        } else {
+            alert("Este nombre ya ha sido agregado.");
         }
-
+    } else {
+        alert("Por favor, inserte un nombre.");
+    }
 }
-
+//agregar amigos a la lista
 function agregarLista(){
     let amigosLista = document.getElementById ('listaAmigos');
     amigosLista.innerHTML = "";
@@ -35,13 +42,26 @@ function agregarLista(){
     }  
 
 }
+// contador de victorias
+function actualizarListaContador() {
+    let listaContador = document.getElementById('lista__Contador');
+    listaContador.innerHTML = "";
+
+    for (const [nombre, conteo] of Object.entries(contadorGanadores)) {
+        const li = document.createElement("li");
+        li.textContent = `${nombre}: ${conteo} victoria(s)`;
+        listaContador.appendChild(li);
+    }
+}
+
 //funcion limpiar
 function limpiarLista() {
     document.querySelector('#listaAmigos').innerHTML = "";
     amigosIngresados = [];
+    contadorGanadores = {}; // Reinicia el contador de victorias
+    document.getElementById('lista__Contador').innerHTML = "";
     const input = document.getElementById('amigo');
     input.value = "";
-
 }
 
 function sortearAmigos(){
@@ -60,7 +80,9 @@ function sortearAmigos(){
 
     const resultadoElemento = document.getElementById("resultado");
     resultadoElemento.innerHTML = `El amigo secreto sorteado es ${amigoSorteado}`;
-    return;
+   
+    contadorGanadores[amigoSorteado]++;
+    actualizarListaContador();
 }
 }
 function NuevoJuego(){
