@@ -3,45 +3,90 @@
 let amigosIngresados =[];
 let contadorGanadores = {}; // Contador de victorias por amigos
 
-//ingreso de amigos 
+
+// Función para validar el nombre del amigo
+function validarNombreAmigo(nombre) {
+    if (nombre.trim() === "") {
+        alert("Por favor, inserte un nombre.");
+        return false;
+    }
+
+    if (amigosIngresados.includes(nombre)) {
+        alert("Este nombre ya ha sido agregado.");
+        return false;
+    }
+
+    return true;
+}
+
+// Función para ingresar amigos
 function ingresarAmigos() {
     let textoIngresado = document.getElementById('amigo');
-    if (textoIngresado.value.trim() !== '') {
-        const nombre = textoIngresado.value.trim();
-        
-        if (!amigosIngresados.includes(nombre)) { // Evita duplicados
-            amigosIngresados.push(nombre);
-            contadorGanadores[nombre] = 0; // Inicializa el contador para este amigo
-            textoIngresado.value = "";
-            agregarLista();
-            actualizarListaContador();
-        } else {
-            alert("Este nombre ya ha sido agregado.");
-        }
-    } else {
-        alert("Por favor, inserte un nombre.");
+    const nombre = textoIngresado.value.trim();
+
+    if (validarNombreAmigo(nombre)) {
+        amigosIngresados.push(nombre);
+        contadorGanadores[nombre] = 0; // Inicializa el contador
+        textoIngresado.value = "";
+        renderizarLista(); // Renderiza la lista de amigos
+        actualizarListaContador(); // Renderiza los contadores
     }
 }
+
+// Escuchar el evento "Enter"
+    document.getElementById("amigo").addEventListener("keypress", function (event) {
+    if (event.key === "Enter") {
+        event.preventDefault();
+        ingresarAmigos();
+    }
+});
+
+
 //agregar amigos a la lista
-function agregarLista(){
-    let amigosLista = document.getElementById ('listaAmigos');
-    amigosLista.innerHTML = "";
+function renderizarLista() {
+    let amigosLista = document.getElementById('listaAmigos');
+    amigosLista.innerHTML = ""; // Limpia la lista
 
-    // Recorrer el arreglo y crear elementos <li>
-    for (let i = 0; i < amigosIngresados.length; i++) {
-        const amigo = amigosIngresados[i];
-
-        // Crear un elemento <li>
+    amigosIngresados.forEach((amigo, i) => {
         const li = document.createElement("li");
+        li.classList.add("lista-item");
 
-        // Añadir el nombre del amigo como texto del <li>
-        li.textContent = amigo;
+        // Nombre del amigo
+        const nombreAmigo = document.createElement("span");
+        nombreAmigo.textContent = amigo;
+        nombreAmigo.classList.add("nombre-amigo");
 
-        // Agregar el <li> al contenedor <ul>
-        listaAmigos.appendChild(li);
-    }  
+        // Botón de eliminación
+        const eliminarIcono = document.createElement("i");
+        eliminarIcono.classList.add("fas", "fa-trash", "icono-eliminar");
+        eliminarIcono.addEventListener("click", function () {
+            eliminarAmigo(i);
+        });
 
+        // Añadir elementos al <li>
+        li.appendChild(nombreAmigo);
+        li.appendChild(eliminarIcono);
+
+        // Añadir <li> a la lista
+        amigosLista.appendChild(li);
+    });
 }
+
+//eliminar amigos de lista de ganadores
+function eliminarAmigo(index) {
+    const nombreAmigo = amigosIngresados[index]; // Obtener el nombre del amigo
+    console.log("Intentando eliminar a:", nombreAmigo); // Mensaje de depuraciónd
+
+    amigosIngresados.splice(index, 1); // Eliminar del array de amigos
+    console.log("Lista después de eliminar:", amigosIngresados); // Ver la lista actualizada
+
+    delete contadorGanadores[nombreAmigo]; // Intentar eliminar del objeto de contadores
+    console.log("Contadores después de eliminar:", contadorGanadores); // Ver el objeto de contadores
+
+    renderizarLista(); // Actualizar la lista de amigos
+    actualizarListaContador(); // Actualizar la lista de contadores de victorias
+}
+
 // contador de victorias
 function actualizarListaContador() {
     let listaContador = document.getElementById('lista__Contador');
@@ -51,6 +96,7 @@ function actualizarListaContador() {
         const li = document.createElement("li");
         li.textContent = `${nombre}: ${conteo} victoria(s)`;
         listaContador.appendChild(li);
+        
     }
 }
 

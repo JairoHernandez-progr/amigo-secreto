@@ -191,6 +191,7 @@ ul {
     display: flex;
     height: 100vh;
     width: 100%;
+    
 }
 
 /* Contenido principal */
@@ -200,6 +201,7 @@ ul {
     flex-direction: column;
     gap: 20px;
     padding: 20px;
+    
 }
 
 /* Nueva sección de la lista de contadores */
@@ -260,4 +262,33 @@ ul {
     color: #aaa;
     font-style: italic;
     padding: 20px 0;
+}
+
+/* Estilo general para los elementos de la lista */
+.lista-item {
+    display: flex; /* Usar flexbox para alinear los elementos */
+    justify-content: space-between; /* Distribuir el texto y el ícono */
+    align-items: center; /* Alinear verticalmente al centro */
+    padding: 8px 12px; /* Espaciado interno */
+    border-bottom: 1px solid #ddd; /* Línea divisoria opcional */
+}
+
+/* Estilo del texto del amigo */
+.nombre-amigo {
+    flex-grow: 1; /* Ocupa el espacio disponible */
+    font-size: 16px;
+    color: #333;
+    margin-right: 16px;
+}
+
+/* Estilo del ícono de eliminar */
+.icono-eliminar {
+    cursor: pointer; /* Cambiar el cursor al pasar sobre el ícono */
+    color: red;
+    font-size: 18px; /* Tamaño del ícono */
+    transition: color 0.3s ease; /* Efecto suave al cambiar de color */
+}
+
+.icono-eliminar:hover {
+    color: darkred; /* Cambia el color al pasar el cursor */
 }
