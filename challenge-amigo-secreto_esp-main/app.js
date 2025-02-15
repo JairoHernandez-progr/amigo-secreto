@@ -2,17 +2,28 @@
 
 let amigosIngresados =[];
 let contadorGanadores = {}; // Contador de victorias por amigos
+let limiteDeVictorias = 10;
 
 
 // Función para validar el nombre del amigo
 function validarNombreAmigo(nombre) {
     if (nombre.trim() === "") {
-        alert("Por favor, inserte un nombre.");
+        Swal.fire({
+            title: '¡Atención!',
+            text: 'Por favor, inserte un nombre.',
+            icon: 'warning',
+            confirmButtonText: 'Entendido'
+        });
         return false;
     }
 
     if (amigosIngresados.includes(nombre)) {
-        alert("Este nombre ya ha sido agregado.");
+        Swal.fire({
+            title: '¡Atención!',
+            text: 'Este nombre ya fue Ingresado.',
+            icon: 'warning',
+            confirmButtonText: 'Entendido'
+        });
         return false;
     }
 
@@ -129,6 +140,21 @@ function sortearAmigos(){
    
     contadorGanadores[amigoSorteado]++;
     actualizarListaContador();
+
+        //limite de victorias
+    if (contadorGanadores[amigoSorteado] >= limiteDeVictorias) {
+        Swal.fire({
+            title: '¡Felicidades!',
+            text: `${amigoSorteado} ha ganado el juego con ${limiteDeVictorias} victorias.`,
+            icon: 'success',
+            confirmButtonText: '¡Genial!'
+        }).then(() => {
+            // Reiniciar el juego después de que el usuario cierre la alerta
+            NuevoJuego();
+        });
+    
+    }
+
 }
 }
 function NuevoJuego(){
