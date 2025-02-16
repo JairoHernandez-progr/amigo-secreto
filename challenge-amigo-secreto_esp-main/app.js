@@ -2,9 +2,18 @@
 
 let amigosIngresados =[];
 let contadorGanadores = {}; // Contador de victorias por amigos
-let limiteDeVictorias = 10;
+//let limiteDeVictorias = 10;
 
-
+//personalizar alert toastr
+toastr.options = {
+    "closeButton": true,
+    "progressBar": true,
+    "positionClass": "toast-top-right",  // Cambia la posición si lo deseas
+    "showDuration": "300",
+    "hideDuration": "1000",
+    "timeOut": "5000",  // Duración de la notificación
+  };
+  
 // Función para validar el nombre del amigo
 function validarNombreAmigo(nombre) {
     if (nombre.trim() === "") {
@@ -119,19 +128,30 @@ function limpiarLista() {
     document.getElementById('lista__Contador').innerHTML = "";
     const input = document.getElementById('amigo');
     input.value = "";
+    const inputContador = document.getElementById('limiteVictorias');
+    inputContador.value = "1";
 }
 
 function sortearAmigos(){
     
     if (amigosIngresados.length === 0){
-
-        alert ("No hay amigos en la lista.");
-        return;
+        console.log(""); // Depuración
+        Swal.fire({
+            title: '¡Atención!',
+            text: 'No hay amigos en la lista.',
+            icon: 'warning',
+            confirmButtonText: 'Entendido'
+        });
+        return false;
     }else if(amigosIngresados.length < 2 ){
-        alert("Añade por lo menos dos amigos para poder sortear");
-        return;
+        Swal.fire({
+            title: '¡Atención!',
+            text: 'Añade por lo menos dos amigos para poder sortear.',
+            icon: 'warning',
+            confirmButtonText: 'Entendido'
+        });
+        return false;
     }else{
-
     const indiceAleatorio = Math.floor(Math.random() * amigosIngresados.length);
     const amigoSorteado = amigosIngresados[indiceAleatorio];
 
@@ -141,7 +161,10 @@ function sortearAmigos(){
     contadorGanadores[amigoSorteado]++;
     actualizarListaContador();
 
-        //limite de victorias
+    // Leer el límite de victorias desde el input
+    let limiteDeVictorias = parseInt(document.getElementById("limiteVictorias").value);
+    //limite de victorias
+
     if (contadorGanadores[amigoSorteado] >= limiteDeVictorias) {
         Swal.fire({
             title: '¡Felicidades!',
@@ -157,6 +180,7 @@ function sortearAmigos(){
 
 }
 }
+//boton nuevo juego
 function NuevoJuego(){
     //limpia la lista
     limpiarLista();

@@ -7,6 +7,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;400;700;900&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&display=swap" rel="stylesheet">
     <title>Amigos Secretos</title>
@@ -25,10 +28,14 @@
                 <input type="text" id="amigo" class="input-name" placeholder="Escribe un nombre">
                 <button class="button-add" onclick="ingresarAmigos()">Añadir</button>
             </div>
-           
+            <div class="section-limiteVictorias">
+                <label  class="label-estilizado" for="limiteVictorias">Número de victorias para ganar:</label>
+                <input id="limiteVictorias" type="number" min="1" step="1" placeholder="0">
+            </div>
+             <div class = "section-listaAmigos">
             <ul id="listaAmigos" class="name-list" aria-labelledby="listaAmigos" role="list"></ul>
             <ul id="resultado" class="result-list" aria-live="polite"></ul>
-
+             </div>
             <div class="button-container">
                 <button class="button-draw" onclick="sortearAmigos()" aria-label="Sortear amigo secreto">   
                     <img src="assets/play_circle_outline.png" alt="Ícono para sortear">
@@ -47,5 +54,6 @@
          <ul id="lista__Contador" class="counter-list" aria-labelledby="listaAmigos" role="list"></ul>
     </aside>
     <script src="app.js" defer></script>
+    <script src="eventos.js"></script>
 </body>
 </html>

@@ -292,3 +292,39 @@ ul {
 .icono-eliminar:hover {
     color: darkred; /* Cambia el color al pasar el cursor */
 }
+
+.section-limiteVictorias {
+    display: flex;
+    flex-direction: column; /* Colocar el label arriba y el input abajo */
+    align-items: center; /* Centrar horizontalmente */
+    justify-content: center; /* Centrar verticalmente */
+    /*height: 100vh; /* Altura de la sección para que ocupe toda la pantalla, puedes ajustar según lo necesites */
+}
+
+#limiteVictorias {
+    padding: 5px 10px;
+    font-size: 2rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    outline: none;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+    font-family: "Merriweather", serif;
+    width: 200px; /* Ancho del input */
+    text-align: center; /* Centrar el texto dentro del input */
+}
+
+#limiteVictorias:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.label-estilizado {
+    font-family: "Merriweather", serif;
+    font-size: 18px; /* Tamaño de la fuente */
+    color: #333333; /* Color del texto */
+    font-weight: bold; /* Hacer el texto negrita */
+    margin-bottom: 10px; /* Espacio inferior */
+    display: block; /* Asegurar que el label esté en una línea separada */
+    margin-bottom: 10px; /* Espacio entre el label y el input */
+}
+
