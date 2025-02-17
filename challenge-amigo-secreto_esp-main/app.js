@@ -14,6 +14,44 @@ toastr.options = {
     "timeOut": "5000",  // Duración de la notificación
   };
   
+/* Añade estas modificaciones a tu JavaScript (app.js) */
+function crearCartas() {
+    const contenedor = document.getElementById('contenedor-cartas');
+    contenedor.innerHTML = '';
+    
+    // Crear el contenedor de la escena
+    const escena = document.createElement('div');
+    escena.classList.add('escena-cartas');
+    
+    const ruleta = document.createElement('div');
+    ruleta.classList.add('ruleta-cartas');
+    
+    amigosIngresados.forEach((nombre, index) => {
+        const carta = document.createElement('div');
+        carta.classList.add('carta');
+        carta.dataset.index = index;
+        
+        const frente = document.createElement('div');
+        frente.classList.add('frente');
+        frente.textContent = nombre;
+        
+        const dorso = document.createElement('div');
+        dorso.classList.add('dorso');
+        
+        carta.appendChild(frente);
+        carta.appendChild(dorso);
+        ruleta.appendChild(carta);
+        
+        // Distribuir las cartas en círculo
+        const angulo = (360 / amigosIngresados.length) * index;
+        const radio = Math.min(150, 400 / amigosIngresados.length); // Radio adaptativo
+        carta.style.transform = `rotateY(${angulo}deg) translateZ(${radio}px)`;
+    });
+    
+    escena.appendChild(ruleta);
+    contenedor.appendChild(escena);
+}
+  
 // Función para validar el nombre del amigo
 function validarNombreAmigo(nombre) {
     if (nombre.trim() === "") {
@@ -50,6 +88,7 @@ function ingresarAmigos() {
         textoIngresado.value = "";
         renderizarLista(); // Renderiza la lista de amigos
         actualizarListaContador(); // Renderiza los contadores
+        crearCartas(); // Actualizar cartas
     }
 }
 
@@ -105,6 +144,7 @@ function eliminarAmigo(index) {
 
     renderizarLista(); // Actualizar la lista de amigos
     actualizarListaContador(); // Actualizar la lista de contadores de victorias
+    crearCartas(); // Actualizar cartas
 }
 
 // contador de victorias
@@ -130,67 +170,138 @@ function limpiarLista() {
     input.value = "";
     const inputContador = document.getElementById('limiteVictorias');
     inputContador.value = "1";
+    crearCartas();
+
 }
 
-function sortearAmigos(){
+function sortearAmigos() {
+    if (amigosIngresados.length < 2) {
+        Swal.fire({
+            title: '¡Atención!',
+            text: 'Necesitas al menos dos amigos para iniciar el sorteo.',
+            icon: 'warning',
+            confirmButtonText: 'Entendido'
+        });
+        return;
+    }
+
+    const ruleta = document.querySelector('.ruleta-cartas');
+    const cartas = document.querySelectorAll('.carta');
     
-    if (amigosIngresados.length === 0){
-        console.log(""); // Depuración
-        Swal.fire({
-            title: '¡Atención!',
-            text: 'No hay amigos en la lista.',
-            icon: 'warning',
-            confirmButtonText: 'Entendido'
-        });
-        return false;
-    }else if(amigosIngresados.length < 2 ){
-        Swal.fire({
-            title: '¡Atención!',
-            text: 'Añade por lo menos dos amigos para poder sortear.',
-            icon: 'warning',
-            confirmButtonText: 'Entendido'
-        });
-        return false;
-    }else{
-    const indiceAleatorio = Math.floor(Math.random() * amigosIngresados.length);
-    const amigoSorteado = amigosIngresados[indiceAleatorio];
+    // Voltear todas las cartas
+    cartas.forEach(carta => {
+        carta.classList.add('volteada');
+    });
 
-    const resultadoElemento = document.getElementById("resultado");
-    resultadoElemento.innerHTML = `El amigo secreto sorteado es ${amigoSorteado}`;
-   
-    contadorGanadores[amigoSorteado]++;
-    actualizarListaContador();
+    // Iniciar la animación de la ruleta
+    ruleta.classList.add('ruleta-girando');
 
-    // Leer el límite de victorias desde el input
-    let limiteDeVictorias = parseInt(document.getElementById("limiteVictorias").value);
-    //limite de victorias
+    // Seleccionar ganador después de la animación
+    setTimeout(() => {
+        const indiceGanador = Math.floor(Math.random() * amigosIngresados.length);
+        const cartaGanadora = cartas[indiceGanador];
+        const nombreGanador = amigosIngresados[indiceGanador];
 
-    if (contadorGanadores[amigoSorteado] >= limiteDeVictorias) {
-        Swal.fire({
+        // Detener la ruleta y mostrar el ganador
+        ruleta.classList.remove('ruleta-girando');
+        cartaGanadora.classList.remove('volteada');
+        cartaGanadora.classList.add('ganadora');
+
+        // Actualizar contadores y mostrar resultado
+        contadorGanadores[nombreGanador]++;
+        actualizarListaContador();
+        document.getElementById("resultado").innerHTML = `¡${nombreGanador} ha sido seleccionado!`;
+
+        // Verificar límite de victorias
+        let limiteDeVictorias = parseInt(document.getElementById("limiteVictorias").value);
+        if (contadorGanadores[nombreGanador] >= limiteDeVictorias) {
+            setTimeout(() => {
+                Swal.fire({
+                    title: '¡Felicidades!',
+                    text: `${nombreGanador} ha ganado el juego con ${limiteDeVictorias} victorias.`,
+                    icon: 'success',
+                    confirmButtonText: '¡Genial!'
+                }).then(NuevoJuego);
+            }, 1500);
+        }
+    }, 8000);
+}
+
+
+function iniciarSorteo() {
+    if (amigosIngresados.length === 0) {
+      Swal.fire({
+        title: '¡Atención!',
+        text: 'No hay amigos en la lista.',
+        icon: 'warning',
+        confirmButtonText: 'Entendido'
+      });
+      return;
+    } else if (amigosIngresados.length < 2) {
+      Swal.fire({
+        title: '¡Atención!',
+        text: 'Añade por lo menos dos amigos para poder sortear.',
+        icon: 'warning',
+        confirmButtonText: 'Entendido'
+      });
+      return;
+    }
+  
+    const cartas = document.querySelectorAll('.carta');
+    cartas.forEach((carta) => {
+      carta.classList.add('volteada');
+    });
+  
+    setTimeout(() => {
+      mezclarCartas(cartas);
+  
+      setTimeout(() => {
+        const indiceAleatorio = Math.floor(Math.random() * cartas.length);
+        const cartaSorteada = cartas[indiceAleatorio];
+        cartaSorteada.classList.remove('volteada');
+        cartaSorteada.classList.add('seleccionada');
+  
+        const amigoSorteado = amigosIngresados[indiceAleatorio];
+        document.getElementById("resultado").innerHTML = `El amigo secreto sorteado es ${amigoSorteado}`;
+        contadorGanadores[amigoSorteado]++;
+        actualizarListaContador();
+  
+        let limiteDeVictorias = parseInt(document.getElementById("limiteVictorias").value);
+        if (contadorGanadores[amigoSorteado] >= limiteDeVictorias) {
+          Swal.fire({
             title: '¡Felicidades!',
             text: `${amigoSorteado} ha ganado el juego con ${limiteDeVictorias} victorias.`,
             icon: 'success',
             confirmButtonText: '¡Genial!'
-        }).then(() => {
-            // Reiniciar el juego después de que el usuario cierre la alerta
-            NuevoJuego();
-        });
-    
-    }
+          }).then(NuevoJuego);
+        }
+      }, 2000);
+    }, 1000);
+  }
+  
+  function mezclarCartas(cartas) {
+    cartas.forEach((carta) => {
+      const x = Math.random() * 300 - 150;
+      const y = Math.random() * 300 - 150;
+      carta.style.transform = `translate(${x}px, ${y}px) rotate(${Math.random() * 360}deg)`;
+    });
+  }
+  
+  document.addEventListener('DOMContentLoaded', crearCartas);
+  document.getElementById('btn-sorteo').addEventListener('click', iniciarSorteo);
 
-}
-}
 //boton nuevo juego
-function NuevoJuego(){
-    //limpia la lista
+// Modificar la función NuevoJuego para manejar las cartas
+function NuevoJuego() {
     limpiarLista();
-    //limpiamos el resultado del juego
-    const resultadoElemento = document.getElementById('resultado');
-    resultadoElemento.innerHTML = "";
-    //limpiamos el array
-    amigosIngresados = [];
-
-    alert ("El juego a comenzado de Nuevo Añade nuevos Nombres");
-
-
+    document.getElementById('resultado').innerHTML = "";
+    const contenedor = document.getElementById('contenedor-cartas');
+    contenedor.innerHTML = '';
+    
+    Swal.fire({
+        title: '¡Nuevo Juego!',
+        text: "El juego ha comenzado de nuevo",
+        icon: 'success',
+        confirmButtonText: '¡Genial!'
+    });
 }
