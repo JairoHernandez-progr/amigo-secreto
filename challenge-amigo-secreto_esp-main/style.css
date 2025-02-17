@@ -332,7 +332,7 @@ ul {
 /*estilos para las cartas*/
 .cartas-container {
     perspective: 1000px;
-    height: 400px;
+    height: 100px;
     position: relative;
     margin: 20px auto;
     width: 100%;

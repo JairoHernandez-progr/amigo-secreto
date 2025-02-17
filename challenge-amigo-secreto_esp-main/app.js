@@ -187,7 +187,12 @@ function sortearAmigos() {
 
     const ruleta = document.querySelector('.ruleta-cartas');
     const cartas = document.querySelectorAll('.carta');
-    
+
+    // Eliminar la clase "ganadora" de cualquier carta anterior
+    cartas.forEach(carta => {
+        carta.classList.remove('ganadora');
+    });
+
     // Voltear todas las cartas
     cartas.forEach(carta => {
         carta.classList.add('volteada');
