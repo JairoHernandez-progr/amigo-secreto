@@ -15,42 +15,43 @@ toastr.options = {
   };
   
 /* Añade estas modificaciones a tu JavaScript (app.js) */
+
 function crearCartas() {
-    const contenedor = document.getElementById('contenedor-cartas');
-    contenedor.innerHTML = '';
+        const contenedor = document.getElementById('contenedor-cartas');
+        contenedor.innerHTML = '';
     
-    // Crear el contenedor de la escena
-    const escena = document.createElement('div');
-    escena.classList.add('escena-cartas');
+        const escena = document.createElement('div');
+        escena.classList.add('escena-cartas');
     
-    const ruleta = document.createElement('div');
-    ruleta.classList.add('ruleta-cartas');
+        const ruleta = document.createElement('div');
+        ruleta.classList.add('ruleta-cartas');
     
-    amigosIngresados.forEach((nombre, index) => {
-        const carta = document.createElement('div');
-        carta.classList.add('carta');
-        carta.dataset.index = index;
-        
-        const frente = document.createElement('div');
-        frente.classList.add('frente');
-        frente.textContent = nombre;
-        
-        const dorso = document.createElement('div');
-        dorso.classList.add('dorso');
-        
-        carta.appendChild(frente);
-        carta.appendChild(dorso);
-        ruleta.appendChild(carta);
-        
-        // Distribuir las cartas en círculo
-        const angulo = (360 / amigosIngresados.length) * index;
-        const radio = Math.min(150, 400 / amigosIngresados.length); // Radio adaptativo
-        carta.style.transform = `rotateY(${angulo}deg) translateZ(${radio}px)`;
-    });
+        amigosIngresados.forEach((nombre, index) => {
+            const carta = document.createElement('div');
+            carta.classList.add('carta');
+            carta.dataset.index = index;
     
-    escena.appendChild(ruleta);
-    contenedor.appendChild(escena);
+            const frente = document.createElement('div');
+            frente.classList.add('frente');
+            frente.textContent = nombre;
+    
+            const dorso = document.createElement('div');
+            dorso.classList.add('dorso');
+    
+            carta.appendChild(frente);
+            carta.appendChild(dorso);
+            ruleta.appendChild(carta);
+    
+            const angulo = (360 / amigosIngresados.length) * index;
+            const radio = 300; // Radio fijo para el carrusel
+            carta.style.transform = `rotateY(${angulo}deg) translateZ(${radio}px)`;
+        });
+    
+        escena.appendChild(ruleta);
+        contenedor.appendChild(escena);
+    
 }
+
   
 // Función para validar el nombre del amigo
 function validarNombreAmigo(nombre) {
@@ -91,15 +92,6 @@ function ingresarAmigos() {
         crearCartas(); // Actualizar cartas
     }
 }
-
-// Escuchar el evento "Enter"
-    document.getElementById("amigo").addEventListener("keypress", function (event) {
-    if (event.key === "Enter") {
-        event.preventDefault();
-        ingresarAmigos();
-    }
-});
-
 
 //agregar amigos a la lista
 function renderizarLista() {
@@ -174,7 +166,71 @@ function limpiarLista() {
 
 }
 
+// resetear cartas
+function resetearCartas() {
+    const cartas = document.querySelectorAll('.carta');
+
+    cartas.forEach((carta) => {
+        // Eliminar todas las posibles clases aplicadas
+        carta.classList.remove('ganadora', 'apilada', 'volteada', 'neutral', 'ruleta-girando');
+
+        // Reiniciar estilos y transformaciones
+        carta.style.transform = 'rotateY(0deg) translateZ(0) scale(1)';
+        carta.style.zIndex = 'auto';
+        carta.style.boxShadow = 'none';
+        carta.style.transition = 'none'; // Deshabilitar transiciones para evitar efectos no deseados
+    });
+}
+
+
+function activarTransiciones() {
+    const cartas = document.querySelectorAll('.carta');
+    cartas.forEach((carta) => {
+        carta.style.transition = 'transform 0.6s ease-out';
+    });
+}
+
+function marcarCartaGanadora(carta) {
+    // Eliminar cualquier clase o transformación previa
+    carta.classList.remove('apilada');
+    carta.style.transform = '';
+    carta.classList.add('ganadora'); // Marcar como ganadora
+}
+
+function finalizarSorteo(cartaGanadora, ruleta) {
+    // Detener la animación de la ruleta
+    ruleta.classList.remove('ruleta-girando');
+    // Marcar la carta ganadora
+    marcarCartaGanadora(cartaGanadora);
+}
+
+function seleccionarGanador(cartaGanadora, cartas) {
+    // Limpiar todas las cartas antes de aplicar clases
+    cartas.forEach((carta) => {
+        carta.classList.remove('ganadora', 'apilada', 'neutral');
+        carta.classList.add('neutral'); // Asegurar que todas estén rectas
+    });
+
+    // Aplicar clase ganadora a la carta correspondiente
+    cartaGanadora.classList.add('ganadora');
+}
+//funcion sortear
 function sortearAmigos() {
+    // Reiniciar las cartas antes de empezar el sorteo
+    resetearCartas();
+    activarTransiciones();
+
+    // Validar si hay amigos suficientes para el sorteo
+    if (amigosIngresados.length === 0) {
+        Swal.fire({
+            title: '¡Atención!',
+            text: 'La lista está vacía. No se puede iniciar el sorteo.',
+            icon: 'warning',
+            confirmButtonText: 'Entendido'
+        });
+        return;
+    }
+
     if (amigosIngresados.length < 2) {
         Swal.fire({
             title: '¡Atención!',
@@ -187,37 +243,69 @@ function sortearAmigos() {
 
     const ruleta = document.querySelector('.ruleta-cartas');
     const cartas = document.querySelectorAll('.carta');
+    const numCartas = cartas.length;
+    let currentIndex = 0;
 
-    // Eliminar la clase "ganadora" de cualquier carta anterior
-    cartas.forEach(carta => {
-        carta.classList.remove('ganadora');
-    });
+    // Configurar las posiciones iniciales del carrusel
+    function setCarouselPositions() {
+        const angle = 360 / numCartas;
+        cartas.forEach((carta, index) => {
+            carta.style.transform = `rotateY(${index * angle}deg) translateZ(300px)`;
+        });
+    }
 
-    // Voltear todas las cartas
-    cartas.forEach(carta => {
-        carta.classList.add('volteada');
-    });
+    // Resetear la posición de la ruleta
+    function resetRuleta() {
+        ruleta.style.transform = `translate(-50%, -50%) rotateY(0deg)`;
+    }
 
-    // Iniciar la animación de la ruleta
-    ruleta.classList.add('ruleta-girando');
+    // Mostrar la siguiente carta en el carrusel
+    function showNextCard() {
+        const angle = 360 / numCartas;
+        currentIndex = (currentIndex + 1) % numCartas;
+        cartas.forEach((carta, index) => {
+            const cardIndex = (index + currentIndex) % numCartas;
+            carta.style.transform = `rotateY(${cardIndex * angle}deg) translateZ(300px)`;
+        });
+    }
 
-    // Seleccionar ganador después de la animación
+    // Inicializar el carrusel
+    setCarouselPositions();
+    resetRuleta();
+    const interval = setInterval(showNextCard, 2000); // Cambiar cartas cada 2 segundos
+
+    // Seleccionar el ganador después de la animación
     setTimeout(() => {
+        clearInterval(interval); // Detener el carrusel
         const indiceGanador = Math.floor(Math.random() * amigosIngresados.length);
         const cartaGanadora = cartas[indiceGanador];
         const nombreGanador = amigosIngresados[indiceGanador];
 
-        // Detener la ruleta y mostrar el ganador
-        ruleta.classList.remove('ruleta-girando');
-        cartaGanadora.classList.remove('volteada');
-        cartaGanadora.classList.add('ganadora');
+        // Detener la ruleta y marcar la carta ganadora
+        finalizarSorteo(cartaGanadora, ruleta);
 
-        // Actualizar contadores y mostrar resultado
+        // Asegurar que todas las cartas estén en estado neutral y marcar la ganadora
+        seleccionarGanador(cartaGanadora, cartas);
+
+        // Después de 3 segundos, apilar las cartas
+        setTimeout(() => {
+            cartas.forEach((carta, index) => {
+                // Apilar las cartas de forma ordenada
+                carta.style.transform = `translateZ(-${(cartas.length - index) * 10}px) rotateY(0deg)`;
+                carta.style.transition = 'transform 1.5s ease-out'; // Transición suave
+            });
+
+            // Destacar la carta ganadora al frente
+            cartaGanadora.style.transform = `translateZ(200px) rotateY(0deg) scale(1.2)`;
+            cartaGanadora.style.zIndex = 1000;
+        }, 3000);
+
+        // Actualizar los contadores de victorias y mostrar el resultado
         contadorGanadores[nombreGanador]++;
         actualizarListaContador();
         document.getElementById("resultado").innerHTML = `¡${nombreGanador} ha sido seleccionado!`;
 
-        // Verificar límite de victorias
+        // Verificar si alguien alcanzó el límite de victorias
         let limiteDeVictorias = parseInt(document.getElementById("limiteVictorias").value);
         if (contadorGanadores[nombreGanador] >= limiteDeVictorias) {
             setTimeout(() => {
@@ -229,11 +317,13 @@ function sortearAmigos() {
                 }).then(NuevoJuego);
             }, 1500);
         }
-    }, 8000);
+    }, 8000); // El ganador se selecciona después de 4 segundos
 }
 
 
-function iniciarSorteo() {
+
+//funcion iniciar sorteo
+/*function iniciarSorteo() {
     if (amigosIngresados.length === 0) {
       Swal.fire({
         title: '¡Atención!',
@@ -282,18 +372,21 @@ function iniciarSorteo() {
         }
       }, 2000);
     }, 1000);
-  }
-  
-  function mezclarCartas(cartas) {
+  }*/
+  //funcion mezclar cartas
+ /* function mezclarCartas(cartas) {
     cartas.forEach((carta) => {
-      const x = Math.random() * 300 - 150;
-      const y = Math.random() * 300 - 150;
-      carta.style.transform = `translate(${x}px, ${y}px) rotate(${Math.random() * 360}deg)`;
+        const x = Math.random() * 300 - 150;
+        const y = Math.random() * 300 - 150;
+        const rot = Math.random() * 360;
+        carta.style.transition = 'transform 0.6s ease-out';
+        carta.style.transform = `translate(${x}px, ${y}px) rotate(${rot}deg)`;
     });
-  }
+ }
   
   document.addEventListener('DOMContentLoaded', crearCartas);
-  document.getElementById('btn-sorteo').addEventListener('click', iniciarSorteo);
+  document.getElementById('btn-sorteo').addEventListener('click', sortearAmigos);*/
+
 
 //boton nuevo juego
 // Modificar la función NuevoJuego para manejar las cartas

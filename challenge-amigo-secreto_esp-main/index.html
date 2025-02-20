@@ -20,8 +20,8 @@
         <header class="header-banner">
             <h1 class="main-title">Amigo Secreto</h1>
             <img src="assets/amigo-secreto.png" alt="Imagen representativa de amigo secreto">
+            <!-- Nueva sección para la lista de contadores -->
         </header>
-        
         <section class="input-section">
             <h2 class="section-title">Digite el nombre de sus amigos</h2>
             <div class="input-wrapper">
@@ -30,7 +30,7 @@
             </div>
             <div class="section-limiteVictorias">
                 <label  class="label-estilizado" for="limiteVictorias">Número de victorias para ganar:</label>
-                <input id="limiteVictorias" type="number" min="1" step="1" placeholder="0">
+                <input id="limiteVictorias" type="number" min="1" step="1" placeholder="1">
             </div>
             <div id="contenedor-cartas" class="cartas-container"></div>
              <div class = "section-listaAmigos">
@@ -49,7 +49,6 @@
             </div>
         </section>
     </main>
-    <!-- Nueva sección para la lista de contadores -->
     <aside class="counter-list-section">
         <h2>Contador de Ganadores</h2>
          <ul id="lista__Contador" class="counter-list" aria-labelledby="listaAmigos" role="list"></ul>

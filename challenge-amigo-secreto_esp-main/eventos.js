@@ -34,3 +34,11 @@ document.getElementById("limiteVictorias").addEventListener("keydown", function 
         event.preventDefault(); // Evita que se ingresen letras
     }
 });
+
+// Escuchar el evento "Enter"
+document.getElementById("amigo").addEventListener("keypress", function (event) {
+    if (event.key === "Enter") {
+        event.preventDefault();
+        ingresarAmigos();
+    }
+});
