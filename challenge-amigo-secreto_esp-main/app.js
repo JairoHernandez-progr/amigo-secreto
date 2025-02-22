@@ -44,8 +44,8 @@ function crearCartas() {
     
             const angulo = (360 / amigosIngresados.length) * index;
             const radio = 300; // Radio fijo para el carrusel
-            carta.style.transform = `rotateY(${angulo}deg) translateZ(${radio}px)`;
-        });
+            const offsetY = -70; // Ajusta este valor según cuánto quieras subir
+            carta.style.transform = `rotateY(${angulo}deg) translateZ(${radio}px) translateY(${offsetY}px)`;});
     
         escena.appendChild(ruleta);
         contenedor.appendChild(escena);
