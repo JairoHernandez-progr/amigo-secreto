@@ -45,8 +45,9 @@ function crearCartas() {
             const angulo = (360 / amigosIngresados.length) * index;
             const radio = 300; // Radio fijo para el carrusel
             const offsetY = -70; // Ajusta este valor según cuánto quieras subir
+            //const offsetX = -70; // Ajusta este valor según cuánto quieras subir
             carta.style.transform = `rotateY(${angulo}deg) translateZ(${radio}px) translateY(${offsetY}px)`;});
-    
+            
         escena.appendChild(ruleta);
         contenedor.appendChild(escena);
     
@@ -216,9 +217,6 @@ function seleccionarGanador(cartaGanadora, cartas) {
 }
 //funcion sortear
 function sortearAmigos() {
-    // Reiniciar las cartas antes de empezar el sorteo
-    resetearCartas();
-    activarTransiciones();
 
     // Validar si hay amigos suficientes para el sorteo
     if (amigosIngresados.length === 0) {
@@ -240,7 +238,9 @@ function sortearAmigos() {
         });
         return;
     }
-
+       // Reiniciar las cartas antes de empezar el sorteo
+       resetearCartas();
+       activarTransiciones();
     const ruleta = document.querySelector('.ruleta-cartas');
     const cartas = document.querySelectorAll('.carta');
     const numCartas = cartas.length;
@@ -250,7 +250,7 @@ function sortearAmigos() {
     function setCarouselPositions() {
         const angle = 360 / numCartas;
         cartas.forEach((carta, index) => {
-            carta.style.transform = `rotateY(${index * angle}deg) translateZ(300px)`;
+            carta.style.transform = `rotateY(${index * angle}deg)  translateZ(300px)`;
         });
     }
 
@@ -291,14 +291,14 @@ function sortearAmigos() {
         setTimeout(() => {
             cartas.forEach((carta, index) => {
                 // Apilar las cartas de forma ordenada
-                carta.style.transform = `translateZ(-${(cartas.length - index) * 10}px) rotateY(0deg)`;
+                carta.style.transform = `translateX(-40px) translateZ(-${(cartas.length - index) * 10}px) rotateY(0deg)`;
                 carta.style.transition = 'transform 1.5s ease-out'; // Transición suave
             });
 
             // Destacar la carta ganadora al frente
             cartaGanadora.style.transform = `translateZ(200px) rotateY(0deg) scale(1.2)`;
             cartaGanadora.style.zIndex = 1000;
-        }, 3000);
+        }, 1500);
 
         // Actualizar los contadores de victorias y mostrar el resultado
         contadorGanadores[nombreGanador]++;

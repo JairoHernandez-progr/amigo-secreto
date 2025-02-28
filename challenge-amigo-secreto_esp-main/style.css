@@ -1,6 +1,6 @@
 :root {
     --color-primary: #4B69FD;
-    --color-secondary: #FFF9EB;
+    --color-secondary: #444444;
     --color-tertiary: #C4C4C4;
     --color-button: #fe652b;
     --color-button-hover: #e55720;
@@ -341,6 +341,7 @@ ul {
     max-width: 800px;
     margin: 0 auto;
     margin-top: 150px;
+    
 }
 
 .escena-cartas {
@@ -348,6 +349,8 @@ ul {
     height: 100%;
     position: relative;
     transform-style: preserve-3d;
+    transform: translateX(-75px);
+
 }
 
 .ruleta-cartas {
@@ -356,6 +359,8 @@ ul {
     height: 100%;
     transform-style: preserve-3d;
     transform-origin: center;
+    transform: translateX(-1px); /* Ajusta el valor según lo necesites */
+
 }
 
 
@@ -412,7 +417,7 @@ ul {
 /* Estilo para la carta ganadora */
 .carta.ganadora {
     z-index: 1000;
-    transform: translateZ(150px) rotateY(0deg) scale(1.2) !important; /* Asegurar que esté completamente al frente */
+    transform: translateZ(150px) rotateY(0deg) translateX(-3PX) scale(1.2) !important; /* Asegurar que esté completamente al frente */
     box-shadow: 0 0 30px rgba(74, 108, 247, 0.7);
     transition: transform 0.6s ease-out, box-shadow 0.6s ease-out;
 }
@@ -420,6 +425,15 @@ ul {
     animation: sacudida 1s infinite;
 }
 
+/*.sin-cartas {
+    min-height: 0;
+    margin-top: 0;
+}
+
+.con-cartas {
+    min-height: 250px; /* Ajusta según el tamaño de las cartas 
+    margin-top: 50px;
+}*/
 @keyframes sacudida {
     0% { transform: translateX(0); }
     25% { transform: translateX(-5px); }
